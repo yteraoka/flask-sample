@@ -11,6 +11,7 @@ jobs:
       - docker/build:
           image: ${CIRCLE_SHA1}
   build_and_push:
+    executor: docker/docker
     steps:
       - aws-ecr/build_and_push_image:
           account-url: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
