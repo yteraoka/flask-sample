@@ -7,7 +7,6 @@ jobs:
     steps:
       - setup_remote_docker
       - checkout
-      - docker/check
       - docker/build:
           image: ${CIRCLE_SHA1}
 workflows:
