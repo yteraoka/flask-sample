@@ -9,7 +9,7 @@ jobs:
       - checkout
       - docker/check
       - docker/build:
-        image: ${CIRCLE_SHA1}
+          image: ${CIRCLE_SHA1}
 workflows:
   build:
     jobs:
