@@ -1,5 +1,6 @@
 orbs:
   docker: circleci/docker@1.6.0
+  aws-ecr: circleci/aws-ecr@0.0.2
 version: 2.1
 jobs:
   build_container_image:
