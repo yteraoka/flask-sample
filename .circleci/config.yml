@@ -9,7 +9,23 @@ jobs:
       - checkout
       - docker/build:
           image: ${CIRCLE_SHA1}
+  build_and_push:
+    steps:
+      - aws-ecr/build_and_push_image:
+          account-url: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+          repo: "${AWS_RESOURCE_NAME_PREFIX}"
+          region: ${AWS_DEFAULT_REGION}
+          tag: ${CIRCLE_TAG}
 workflows:
   build:
     jobs:
-      - build_container_image
+      - build_container_image:
+          filters:
+            tags:
+              ignore: /.*/
+      - build_and_push:
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
