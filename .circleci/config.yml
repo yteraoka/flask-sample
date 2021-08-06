@@ -1,15 +1,15 @@
+orbs:
+  docker: circleci/docker@1.6.0
 version: 2.1
 jobs:
   build_container_image:
-    docker:
-      - image: 
+    executor: docker/docker
     steps:
       - setup_remote_docker
       - checkout
-      - run:
-          name: Docker Build
-          command: |
-            docker build . -t ${CIRCLE_SHA1}
+      - docker/check
+      - docker/build:
+        image: ${CIRCLE_SHA1}
 workflows:
   build:
     jobs:
