@@ -3,7 +3,7 @@ orbs:
 version: 2.1
 jobs:
   build_container_image:
-    executor: docker/docker
+    executor: machine
     steps:
       - aws-ecr/build-image:
           repo: "${AWS_RESOURCE_NAME_PREFIX}"
