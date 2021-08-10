@@ -1,19 +1,13 @@
 orbs:
-  docker: circleci/docker@1.6.0
-  aws-ecr: circleci/aws-ecr@0.0.2
+  aws-ecr: circleci/aws-ecr@7.0.0
 version: 2.1
 jobs:
   build_container_image:
-    executor: docker/docker
     steps:
-      - setup_remote_docker
-      - checkout
-      - docker/build:
-          image: $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+      - aws-ecr/build-image
       - run:
-          name: echo image
-          command: |
-            echo $CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME
+        command: |
+          docker image ls
       - run:
           name: install dockle
           command: |
@@ -27,7 +21,7 @@ jobs:
             sudo mv dockle /usr/local/bin
       - run:
           name: Scan the image with docke
-          command: dockle --exit-code 1 ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+          command: dockle --exit-code 1 --exit-level FATAL ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
 workflows:
   build:
     jobs:
