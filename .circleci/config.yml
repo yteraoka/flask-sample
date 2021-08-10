@@ -5,7 +5,8 @@ jobs:
   build_container_image:
     executor: docker
     steps:
-      - aws-ecr/build-image
+      - aws-ecr/build-image:
+          repo: "${AWS_RESOURCE_NAME_PREFIX}"
       - run:
         command: |
           docker image ls
