@@ -3,6 +3,7 @@ orbs:
 version: 2.1
 jobs:
   build_container_image:
+    executor: docker
     steps:
       - aws-ecr/build-image
       - run:
