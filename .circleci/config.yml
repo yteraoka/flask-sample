@@ -3,7 +3,8 @@ orbs:
 version: 2.1
 jobs:
   build_container_image:
-    executor: machine
+    machine:
+      image: default
     steps:
       - aws-ecr/build-image:
           repo: "${AWS_RESOURCE_NAME_PREFIX}"
@@ -31,7 +32,7 @@ workflows:
           filters:
             tags:
               ignore: /.*/
-      - aws-ecr/build_and_push_image:
+      - aws-ecr/build-and-push-image:
           account-url: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
           repo: "${AWS_RESOURCE_NAME_PREFIX}"
           region: ${AWS_DEFAULT_REGION}
