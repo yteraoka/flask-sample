@@ -30,21 +30,8 @@ jobs:
             tar zxvf dockle_${VERSION}_Linux-64bit.tar.gz
             sudo mv dockle /usr/local/bin
       - run:
-          name: docker image ls again
-          command: |
-            docker image ls
-      - run:
-          name: docker image ls again 2
-          command: |
-            docker image ls
-      - run:
-          name: docker image ls again 3
-          command: |
-            docker image ls
-      - run:
           name: Scan the image with docke
-          #command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
-          command: dockle --exit-code 1 --exit-level FATAL python:3
+          command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
       - run:
           name: Install trivy
           command: |
