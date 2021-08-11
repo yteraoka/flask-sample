@@ -22,12 +22,12 @@ jobs:
               grep '"tag_name":' | \
               sed -E 's/.*"v([^"]+)".*/\1/'
             )
-            curl -LO https://github.com/goodwithtech/dockle/releases/download/v${VERSION}/dockle_${VERSION}_Linux-64bit.tar.gz
+            curl -sLO https://github.com/goodwithtech/dockle/releases/download/v${VERSION}/dockle_${VERSION}_Linux-64bit.tar.gz
             tar zxvf dockle_${VERSION}_Linux-64bit.tar.gz
             sudo mv dockle /usr/local/bin
       - run:
           name: Scan the image with docke
-          command: dockle --exit-code 1 --exit-level FATAL ${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+          command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
 workflows:
   build:
     jobs:
