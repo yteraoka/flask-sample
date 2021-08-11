@@ -6,7 +6,7 @@ jobs:
     #machine:
     #  image: default
     docker:
-      - image: debian:stable-slim
+      - image: cimg/base:2021.04
     steps:
       - aws-ecr/build-image:
           checkout: true
