@@ -43,7 +43,8 @@ jobs:
             docker image ls
       - run:
           name: Scan the image with docke
-          command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
+          #command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
+          command: dockle --exit-code 1 --exit-level FATAL python:3
       - run:
           name: Install trivy
           command: |
