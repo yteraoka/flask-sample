@@ -11,8 +11,8 @@ jobs:
           region: AWS_DEFAULT_REGION
           repo: AWS_ECR_REPO_NAME
       - run:
-        command: |
-          docker image ls
+          command: |
+            docker image ls
       - run:
           name: install dockle
           command: |
