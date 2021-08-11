@@ -3,8 +3,9 @@ orbs:
 version: 2.1
 jobs:
   build_container_image:
-    machine:
-      image: default
+    #machine:
+    #  image: default
+    executor: docker/docker
     steps:
       - aws-ecr/build-image:
           checkout: true
@@ -14,7 +15,7 @@ jobs:
           command: |
             docker image ls
       - run:
-          name: install dockle
+          name: Install dockle
           command: |
             VERSION=$(
               curl --silent "https://api.github.com/repos/goodwithtech/dockle/releases/latest" | \
@@ -28,18 +29,18 @@ jobs:
           name: Scan the image with docke
           command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
       - run:
-          name: install trivy
+          name: Install trivy
           command: |
             VERSION=$(
                 curl --silent "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | \
                 grep '"tag_name":' | \
                 sed -E 's/.*"v([^"]+)".*/\1/'
             )
-            wget https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz
+            curl -sLO https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz
             tar zxvf trivy_${VERSION}_Linux-64bit.tar.gz
             sudo mv trivy /usr/local/bin
       - run:
-          name: scan image with trivy
+          name: Scan image with trivy
           command: trivy image --ignore-unfixed --exit-code 1 --no-progress --severity HIGH,CRITICAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
       - aws-ecr/ecr-login
       - aws-ecr/push-image:
