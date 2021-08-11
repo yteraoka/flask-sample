@@ -1,16 +1,19 @@
 orbs:
   aws-ecr: circleci/aws-ecr@7.0.0
+  docker: circleci/docker@1.6.0
 version: 2.1
 jobs:
   build_container_image:
     #machine:
     #  image: default
-    docker:
-      - image: cimg/base:2021.04
+    #docker:
+    #  - image: cimg/base:2021.04
+    executor: docker/docker
     steps:
       - setup_remote_docker
+      - checkout
+      - docker/check
       - aws-ecr/build-image:
-          checkout: true
           repo: ${AWS_ECR_REPO_NAME}
           tag: ${CIRCLE_SHA1},latest
       - run:
