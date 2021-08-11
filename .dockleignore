@@ -1,0 +1,3 @@
+# apt-get update は必ず apt-get install とセットにしろと言われが
+# やりたいのは apt-get upgrade なので無視
+CIS-DI-0007
