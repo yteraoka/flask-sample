@@ -7,9 +7,9 @@ jobs:
       image: default
     steps:
       - aws-ecr/build-image:
-          account-url: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-          region: ${AWS_DEFAULT_REGION}
-          repo: "${AWS_RESOURCE_NAME_PREFIX}"
+          account-url: AWS_ECR_ACCOUNT_URL
+          region: AWS_DEFAULT_REGION
+          repo: AWS_ECR_REPO_NAME
       - run:
         command: |
           docker image ls
@@ -35,9 +35,9 @@ workflows:
             tags:
               ignore: /.*/
       - aws-ecr/build-and-push-image:
-          account-url: "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-          repo: "${AWS_RESOURCE_NAME_PREFIX}"
-          region: ${AWS_DEFAULT_REGION}
+          account-url: AWS_ECR_ACCOUNT_URL
+          region: AWS_DEFAULT_REGION
+          repo: AWS_ECR_REPO_NAME
           tag: ${CIRCLE_TAG}
           filters:
             tags:
