@@ -11,6 +11,7 @@ jobs:
           region: AWS_DEFAULT_REGION
           repo: ${AWS_ECR_REPO_NAME}
           checkout: true
+          tag: ${CIRCLE_SHA1}
       - run:
           command: |
             docker image ls
