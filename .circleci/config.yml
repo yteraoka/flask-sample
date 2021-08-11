@@ -12,7 +12,6 @@ jobs:
     steps:
       - setup_remote_docker
       - checkout
-      - docker/check
       - aws-ecr/build-image:
           repo: ${AWS_ECR_REPO_NAME}
           tag: ${CIRCLE_SHA1},latest
