@@ -8,6 +8,7 @@ jobs:
     docker:
       - image: cimg/base:2021.04
     steps:
+      - setup_remote_docker
       - aws-ecr/build-image:
           checkout: true
           repo: ${AWS_ECR_REPO_NAME}
