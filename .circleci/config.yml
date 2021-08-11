@@ -10,6 +10,7 @@ jobs:
           account-url: AWS_ECR_ACCOUNT_URL
           region: AWS_DEFAULT_REGION
           repo: ${AWS_ECR_REPO_NAME}
+          checkout: true
       - run:
           command: |
             docker image ls
