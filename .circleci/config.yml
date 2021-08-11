@@ -7,11 +7,9 @@ jobs:
       image: default
     steps:
       - aws-ecr/build-image:
-          account-url: AWS_ECR_ACCOUNT_URL
-          region: AWS_DEFAULT_REGION
-          repo: ${AWS_ECR_REPO_NAME}
           checkout: true
-          tag: ${CIRCLE_SHA1}
+          repo: ${AWS_ECR_REPO_NAME}
+          tag: ${CIRCLE_SHA1},latest
       - run:
           command: |
             docker image ls
@@ -29,6 +27,23 @@ jobs:
       - run:
           name: Scan the image with docke
           command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
+      - run:
+          name: install trivy
+          command: |
+            VERSION=$(
+                curl --silent "https://api.github.com/repos/aquasecurity/trivy/releases/latest" | \
+                grep '"tag_name":' | \
+                sed -E 's/.*"v([^"]+)".*/\1/'
+            )
+            wget https://github.com/aquasecurity/trivy/releases/download/v${VERSION}/trivy_${VERSION}_Linux-64bit.tar.gz
+            tar zxvf trivy_${VERSION}_Linux-64bit.tar.gz
+            sudo mv trivy /usr/local/bin
+      - run:
+          name: scan image with trivy
+          command: trivy image --ignore-unfixed --exit-code 1 --no-progress --severity HIGH,CRITICAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
+      - aws-ecr/ecr-login
+      - aws-ecr/push-image:
+          tag: ${CIRCLE_SHA1},latest
 workflows:
   build:
     jobs:
@@ -37,8 +52,6 @@ workflows:
             tags:
               ignore: /.*/
       - aws-ecr/build-and-push-image:
-          account-url: AWS_ECR_ACCOUNT_URL
-          region: AWS_DEFAULT_REGION
           repo: ${AWS_ECR_REPO_NAME}
           tag: ${CIRCLE_TAG}
           filters:
