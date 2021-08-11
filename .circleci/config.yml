@@ -5,7 +5,8 @@ jobs:
   build_container_image:
     #machine:
     #  image: default
-    executor: docker/docker
+    docker:
+      - image: docker:latest
     steps:
       - aws-ecr/build-image:
           checkout: true
