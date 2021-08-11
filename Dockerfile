@@ -3,9 +3,11 @@ RUN apt-get update \
   && apt-get upgrade -y \
   && apt-get -y clean \
   && rm -rf /var/lib/apt/lists/*
-RUN mkdir /app
+RUN groupadd app && useradd -g app app
+RUN mkdir /app && chown app:app /app
 COPY app/* /app/
-RUN cd /app && pip install -r requirements.txt
 WORKDIR /app
+RUN pip install -r requirements.txt
 ENV FLASK_APP=app.py
+USER app
 CMD flask run --host=0.0.0.0
