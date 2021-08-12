@@ -30,6 +30,9 @@ jobs:
             tar zxvf dockle_${VERSION}_Linux-64bit.tar.gz
             sudo mv dockle /usr/local/bin
       - run:
+          command: |
+            docker image inspect ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1:0:7}
+      - run:
           name: Scan the image with docke
           #command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
           command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1:0:7}
