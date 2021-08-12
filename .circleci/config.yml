@@ -14,7 +14,7 @@ jobs:
       - checkout
       - aws-ecr/build-image:
           repo: ${AWS_ECR_REPO_NAME}
-          tag: ${CIRCLE_SHA1},latest
+          tag: ${CIRCLE_SHA1:0:7},latest
       - run:
           command: |
             docker image ls
@@ -32,7 +32,7 @@ jobs:
       - run:
           name: Scan the image with docke
           #command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
-          command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:latest
+          command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1:0:7}
       - run:
           name: Install trivy
           command: |
@@ -46,7 +46,7 @@ jobs:
             sudo mv trivy /usr/local/bin
       - run:
           name: Scan image with trivy
-          command: trivy image --ignore-unfixed --exit-code 1 --no-progress --severity HIGH,CRITICAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
+          command: trivy image --ignore-unfixed --exit-code 1 --no-progress --severity HIGH,CRITICAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1:0:7}
       - aws-ecr/ecr-login
       - aws-ecr/push-image:
           repo: ${AWS_ECR_REPO_NAME}
