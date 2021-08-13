@@ -4,11 +4,11 @@ orbs:
 version: 2.1
 jobs:
   build_container_image:
-    #machine:
-    #  image: default
+    machine:
+      image: default
     #docker:
     #  - image: cimg/base:2021.04
-    executor: docker/docker
+    #executor: docker/docker
     steps:
       - run:
           command: echo "export SAFE_BRANCH=$(echo ${CIRCLE_BRANCH} | sed 's/\//-/g')" >> $BASH_ENV
