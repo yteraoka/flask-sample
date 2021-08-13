@@ -58,6 +58,7 @@ jobs:
   tag_push:
     machine:
       image: default
+    steps:
       - aws-cli/install:
           override-installed: true
       - checkout
