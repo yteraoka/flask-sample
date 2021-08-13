@@ -8,17 +8,15 @@ jobs:
     machine:
       image: default
     steps:
+      - checkout
       - run:
-          command: echo "export BRANCH_AND_COMMIT_ID=$(echo ${CIRCLE_BRANCH}-${CIRCLE_SHA1} | sed 's/\//-/g')" >> $BASH_ENV
+          name: Generate image tag
+          command: echo "export BRANCH_AND_COMMIT_ID=$(echo ${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7} | sed 's/\//-/g')" >> $BASH_ENV
       - aws-cli/install:
           override-installed: true
-      - checkout
       - aws-ecr/build-image:
           repo: ${AWS_ECR_REPO_NAME}
           tag: ${BRANCH_AND_COMMIT_ID},${CIRCLE_SHA1},latest
-      - run:
-          command: |
-            docker image ls
       - run:
           name: Install dockle
           command: |
@@ -31,10 +29,7 @@ jobs:
             tar zxvf dockle_${VERSION}_Linux-64bit.tar.gz
             sudo mv dockle /usr/local/bin
       - run:
-          command: |
-            docker image inspect ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${BRANCH_AND_COMMIT_ID}
-      - run:
-          name: Scan the image with docke
+          name: Scan the image with dockle
           command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
       - run:
           name: Install trivy
@@ -59,20 +54,20 @@ jobs:
     machine:
       image: default
     steps:
+      - checkout
       - aws-cli/install:
           override-installed: true
-      - checkout
       - aws-ecr/ecr-login
       - aws-ecr/build-image:
           repo: ${AWS_ECR_REPO_NAME}
           tag: ${CIRCLE_SHA1}
           skip-when-tags-exist: true
       - run:
-          name: pull image
+          name: Pull image
           command: |
             docker image pull ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
       - run:
-          name: tag image
+          name: Tag image
           command: |
             docker image tag ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1} ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_TAG}
       - aws-ecr/push-image:
