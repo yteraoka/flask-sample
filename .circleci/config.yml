@@ -12,14 +12,14 @@ jobs:
     #executor: docker/docker
     steps:
       - run:
-          command: echo "export SAFE_BRANCH=$(echo ${CIRCLE_BRANCH} | sed 's/\//-/g')" >> $BASH_ENV
+          command: echo "export BRANCH_AND_COMMIT_ID=$(echo ${CIRCLE_BRANCH}-${CIRCLE_SHA1} | sed 's/\//-/g')" >> $BASH_ENV
       #- setup_remote_docker
       - aws-cli/install:
           override-installed: true
       - checkout
       - aws-ecr/build-image:
           repo: ${AWS_ECR_REPO_NAME}
-          tag: ${SAFE_BRANCH}-${CIRCLE_SHA1:0:7},latest
+          tag: ${BRANCH_AND_COMMIT_ID},${CIRCLE_SHA1},latest
       - run:
           command: |
             docker image ls
@@ -36,14 +36,10 @@ jobs:
             sudo mv dockle /usr/local/bin
       - run:
           command: |
-            docker image inspect ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${SAFE_BRANCH}-${CIRCLE_SHA1:0:7}
-      - run:
-          name: Scan the latest image with docke
-          command: dockle --debug --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:latest
+            docker image inspect ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${BRANCH_AND_COMMIT_ID}
       - run:
           name: Scan the image with docke
-          #command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
-          command: dockle --debug --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${SAFE_BRANCH}-${CIRCLE_SHA1:0:7}
+          command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
       - run:
           name: Install trivy
           command: |
@@ -57,11 +53,11 @@ jobs:
             sudo mv trivy /usr/local/bin
       - run:
           name: Scan image with trivy
-          command: trivy image --ignore-unfixed --exit-code 1 --no-progress --severity HIGH,CRITICAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${SAFE_BRANCH}-${CIRCLE_SHA1:0:7}
+          command: trivy image --ignore-unfixed --exit-code 1 --no-progress --severity HIGH,CRITICAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
       - aws-ecr/ecr-login
       - aws-ecr/push-image:
           repo: ${AWS_ECR_REPO_NAME}
-          tag: ${CIRCLE_SHA1},latest
+          tag: ${BRANCH_AND_COMMIT_ID},${CIRCLE_SHA1},latest
 workflows:
   build:
     jobs:
