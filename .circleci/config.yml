@@ -69,10 +69,6 @@ jobs:
           tag: ${COMMIT_ID_TAG}
           skip-when-tags-exist: true
       - run:
-          name: Pull image
-          command: |
-            docker image pull ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${COMMIT_ID_TAG}
-      - run:
           name: Tag image
           command: |
             docker image tag ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${COMMIT_ID_TAG} ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_TAG}
