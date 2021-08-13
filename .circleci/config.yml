@@ -36,11 +36,11 @@ jobs:
             docker image inspect ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${SAFE_BRANCH}-${CIRCLE_SHA1:0:7}
       - run:
           name: Scan the latest image with docke
-          command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:latest
+          command: dockle --debug --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:latest
       - run:
           name: Scan the image with docke
           #command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
-          command: dockle --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${SAFE_BRANCH}-${CIRCLE_SHA1:0:7}
+          command: dockle--debug  --exit-code 1 --exit-level FATAL ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${SAFE_BRANCH}-${CIRCLE_SHA1:0:7}
       - run:
           name: Install trivy
           command: |
