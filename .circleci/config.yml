@@ -12,7 +12,7 @@ jobs:
     steps:
       - run:
           command: echo "export SAFE_BRANCH=$(echo ${CIRCLE_BRANCH} | sed 's/\//-/g')" >> $BASH_ENV
-      - setup_remote_docker
+      #- setup_remote_docker
       - checkout
       - aws-ecr/build-image:
           repo: ${AWS_ECR_REPO_NAME}
