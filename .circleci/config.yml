@@ -11,12 +11,12 @@ jobs:
     executor: docker/docker
     steps:
       - run:
-          command: echo "export SAFE_BRANCH=$(${CIRCLE_BRANCH} | sed 's/\//-/g')" >> $BASH_ENV
+          command: echo "export SAFE_BRANCH=$(echo ${CIRCLE_BRANCH} | sed 's/\//-/g')" >> $BASH_ENV
       - setup_remote_docker
       - checkout
       - aws-ecr/build-image:
           repo: ${AWS_ECR_REPO_NAME}
-          tag: ${CIRCLE_SHA1:0:7},latest
+          tag: ${SAFE_BRANCH}-${CIRCLE_SHA1:0:7},latest
       - run:
           command: |
             docker image ls
