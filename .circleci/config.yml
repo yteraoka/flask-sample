@@ -1,6 +1,7 @@
 orbs:
   aws-ecr: circleci/aws-ecr@7.0.0
-  docker: circleci/docker@1.6.0
+  aws-cli: circleci/aws-cli@2.0.3
+  #docker: circleci/docker@1.6.0
 version: 2.1
 jobs:
   build_container_image:
@@ -13,6 +14,8 @@ jobs:
       - run:
           command: echo "export SAFE_BRANCH=$(echo ${CIRCLE_BRANCH} | sed 's/\//-/g')" >> $BASH_ENV
       #- setup_remote_docker
+      - aws-cli/install:
+          override-installed: true
       - checkout
       - aws-ecr/build-image:
           repo: ${AWS_ECR_REPO_NAME}
