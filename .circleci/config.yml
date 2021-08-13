@@ -1,19 +1,15 @@
 orbs:
   aws-ecr: circleci/aws-ecr@7.0.0
   aws-cli: circleci/aws-cli@2.0.3
-  #docker: circleci/docker@1.6.0
 version: 2.1
 jobs:
-  build_container_image:
+  build_scan_push:
+    # docker では dockle がうまく動かないので machine を使う
     machine:
       image: default
-    #docker:
-    #  - image: cimg/base:2021.04
-    #executor: docker/docker
     steps:
       - run:
           command: echo "export BRANCH_AND_COMMIT_ID=$(echo ${CIRCLE_BRANCH}-${CIRCLE_SHA1} | sed 's/\//-/g')" >> $BASH_ENV
-      #- setup_remote_docker
       - aws-cli/install:
           override-installed: true
       - checkout
@@ -58,16 +54,38 @@ jobs:
       - aws-ecr/push-image:
           repo: ${AWS_ECR_REPO_NAME}
           tag: ${BRANCH_AND_COMMIT_ID},${CIRCLE_SHA1},latest
+
+  tag_push:
+    machine:
+      image: default
+      - aws-cli/install:
+          override-installed: true
+      - checkout
+      - aws-ecr/ecr-login
+      - aws-ecr/build-image:
+          repo: ${AWS_ECR_REPO_NAME}
+          tag: ${CIRCLE_SHA1}
+          skip-when-tags-exist: true
+      - run:
+          name: pull image
+          command: |
+            docker image pull ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1}
+      - run:
+          name: tag image
+          command: |
+            docker image tag ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_SHA1} ${AWS_ECR_ACCOUNT_URL}/${AWS_ECR_REPO_NAME}:${CIRCLE_TAG}
+      - aws-ecr/push-image:
+          repo: ${AWS_ECR_REPO_NAME}
+          tag: ${CIRCLE_TAG}
+
 workflows:
   build:
     jobs:
-      - build_container_image:
+      - build_scan_push:
           filters:
             tags:
               ignore: /.*/
-      - aws-ecr/build-and-push-image:
-          repo: ${AWS_ECR_REPO_NAME}
-          tag: ${CIRCLE_TAG}
+      - tag_push:
           filters:
             tags:
               only: /.*/
