@@ -7,7 +7,7 @@ RUN groupadd app && useradd -g app app
 RUN mkdir /app && chown app:app /app
 COPY app/* /app/
 WORKDIR /app
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 ENV FLASK_APP=app.py
 USER app
 CMD ["flask", "run", "--host=0.0.0.0"]
