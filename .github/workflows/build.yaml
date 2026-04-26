@@ -62,6 +62,8 @@ jobs:
           image: flask-sample:scan
           exit-code: '1'
           failure-threshold: fatal
+          # DKL-DI-0005: python:3 base image layers don't clear apt lists; our layers do
+          accept-keys: DKL-DI-0005
 
       - name: Trivy
         # https://github.com/aquasecurity/trivy-action
