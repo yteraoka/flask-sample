@@ -10,16 +10,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
         with:
           python-version: '3'
 
       - name: Install dependencies
-        run: pip install -r app/requirements.txt -r app/requirements-test.txt
+        run: |
+          uv venv
+          uv pip install -r app/requirements.txt -r app/requirements-test.txt
 
       - name: Run pytest
-        run: pytest app/
+        run: uv run pytest app/
 
   lint:
     name: Lint Dockerfile with hadolint
