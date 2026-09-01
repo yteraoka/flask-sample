@@ -1,5 +1,5 @@
 orbs:
-  aws-ecr: circleci/aws-ecr@9.9.0
+  aws-ecr: circleci/aws-ecr@10.0.0
   aws-cli: circleci/aws-cli@5.4.2
 version: 2.1
 jobs:
